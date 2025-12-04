@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Desafio CG2 - Hemofilia A</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+
+    h1, h2, p {
+      margin-bottom: 10px;
+    }
+
+    .exam-button {
+      cursor: pointer;
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      background-color: #007bff;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 4px;
+      width: 400px;
+    }
+
+    .exam-button:hover {
+      background-color: #0056b3;
+    }
+
+    .exam-button.disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    #password-input {
+      margin-bottom: 10px;
+    }
+
+    #game-container {
+      display: none;
+      overflow-y: auto;
+      max-height: 70vh;
+    }
+
+    .scroll-horizontal {
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    #exams-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+    }
+
+    footer {
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 10px;
+    }
+
+    footer p {
+      margin: 5px;
+      font-size: 10px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div id="password-container">
+    <h1>Desafio CG2</h1>
+    <input type="password" id="password-input" placeholder="Digite a senha">
+    <button id="password-button">Enviar</button>
+  </div>
+
+  <div id="game-container">
+
+    <h2>Caso Clínico</h2>
+    <p>
+      Lactente do sexo feminino, 4 meses de idade, previamente hígida, apresenta episódios de equimoses extensas após
+      vacinas e hematomas musculares volumosos após traumas mínimos. Exames mostram atividade de fator VIII abaixo de 2%, compatível com hemofilia grave. Pais não consanguíneos, sem história
+      pessoal de sangramento. Há um irmão do sexo masculino previamente diagnosticado com hemofilia e um irmão sem queixas hemorrágicas.
+    </p>
+
+    <h2>Exames Disponíveis</h2>
+    <p>Total de dinheiro disponível: <span id="total-money">52800</span></p>
+    <div id="exams-list">
+      <!-- ARRAY-CGH -->
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado array-CGH probando:</strong> Foram avaliadas variações no número de cópias em todo o genoma por técnica de microarray-CGH. Foi detectada deleção heterozigótica no braço curto do cromossomo X, em região Xp11, com tamanho estimado de ~7.5 Mb, envolvendo múltiplos genes. Não foram detectadas outras alterações de número de cópias clinicamente relevantes.')">
+        Array-CGH: investigação de perdas e ganhos cromossômicos submicroscópicos (CGH-array) <br>
+        Paciente: II-3 (probando) <br> (Custo: R$3000)
+      </button>
+
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado array-CGH mãe:</strong> Não foram detectadas alterações de número de cópias clinicamente relevantes no genoma da paciente investigada.')">
+        Array-CGH: investigação de perdas e ganhos cromossômicos submicroscópicos (CGH-array) <br>
+        Paciente: I-1 (mãe) <br> (Custo: R$3000)
+      </button>
+
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado array-CGH pai:</strong> Não foram detectadas alterações de número de cópias clinicamente relevantes no genoma do paciente investigado')">
+        Array-CGH: investigação de perdas e ganhos cromossômicos submicroscópicos (CGH-array) <br>
+        Paciente: I-2 (pai) <br> (Custo: R$3000)
+      </button>
+
+
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado array-CGH irmão afetado:</strong> Não foram detectadas alterações de número de cópias clinicamente relevantes no genoma do paciente investigado')">
+        Array-CGH: investigação de perdas e ganhos cromossômicos submicroscópicos (CGH-array) <br>
+        Paciente: II-2 (irmão afetado) <br> (Custo: R$3000)
+      </button>
+
+      <!-- SANGER F8 -->
+      <button class="exam-button" data-cost="600"
+        onclick="requestExamWithPassword(this, 'F8', '<strong>Resultado Sanger probando:</strong> Foram investigados por sequenciamento Sanger todos os exons e regiões de fronteira exon/intron do gene F8. Foi detectada a variante NM_000132.4(F8):c.6976C>T (p.Arg2326Ter) em heterozigose, previamente descrita como patogênica para hemofilia A. Não foram detectadas outras variantes com significado clínico estabelecido.')">
+        Investigação de variantes por sequenciamento Sanger <br>
+        Paciente: II-3 (probando) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExamWithPassword(this, 'F8', '<strong>Resultado Sanger mãe:</strong> Foram investigados por sequenciamento Sanger todos os exons e regiões de fronteira exon/intron do gene F8. Foi detectada a variante NM_000132.4(F8):c.6976C>T (p.Arg2326Ter) em heterozigose, previamente descrita como patogênica para hemofilia A. Não foram detectadas outras variantes com significado clínico estabelecido.')">
+        Investigação de variantes por sequenciamento Sanger <br>
+        Paciente: I-1 (mãe) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExamWithPassword(this, 'F8', '<strong>Resultado Sanger pai:</strong> Foram investigados por sequenciamento Sanger todos os exons e regiões de fronteira exon/intron do gene F8. Não foram detectadas variantes patogênicas ou provavelmente patogênicas no gene F8.')">
+        Investigação de variantes por sequenciamento Sanger <br>
+        Paciente: I-2 (pai) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExamWithPassword(this, 'F8', '<strong>Resultado Sanger irmão afetado:</strong> Foram investigados por sequenciamento Sanger todos os exons e regiões de fronteira exon/intron do gene F8. Foi detectada a variante NM_000132.4(F8):c.6976C>T (p.Arg2326Ter) em hemizigose, previamente descrita como patogênica para hemofilia A. Não foram detectadas outras variantes com significado clínico estabelecido.')">
+        Investigação de variantes por sequenciamento Sanger <br>
+        Paciente: II-2 (irmão afetado) <br> (Custo: R$600)
+      </button>
+
+
+      <!-- ARRAY-SNP -->
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado array-SNP probando:</strong> Foram genotipados cerca de 500 mil polimorfismos de base única por microarray-SNP. Observou-se região de redução de sinal consistente com deleção heterozigótica em Xp11.2. Não foram identificadas outras alterações de número de cópias clinicamente relevantes.')">
+        Array-SNP (genotipagem de SNPs) <br>
+        Paciente: II-3 (probando) <br> (Custo: R$3000)
+      </button>
+
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado array-SNP mãe:</strong> Foram genotipados cerca de 500 mil polimorfismos de base única por microarray-SNP. Não foram detectadas alterações de número de cópias clinicamente relevantes.')">
+        Array-SNP (genotipagem de SNPs) <br>
+        Paciente: I-1 (mãe) <br> (Custo: R$3000)
+      </button>
+
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado array-SNP pai:</strong> Foram genotipados cerca de 500 mil polimorfismos de base única por microarray-SNP. Não foram detectadas alterações de número de cópias clinicamente relevantes.')">
+        Array-SNP (genotipagem de SNPs) <br>
+        Paciente: I-2 (pai) <br> (Custo: R$3000)
+      </button>
+
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado array-SNP irmão afetado:</strong> Foram genotipados cerca de 500 mil polimorfismos de base única por microarray-SNP. Não foram detectadas alterações de número de cópias clinicamente relevantes.')">
+        Array-SNP (genotipagem de SNPs) <br>
+        Paciente: II-2 (irmão afetado) <br> (Custo: R$3000)
+      </button>
+
+
+      <!-- CARIÓTIPO -->
+      <button class="exam-button" data-cost="600"
+        onclick="requestExam(this, '<strong>Cariótipo com bandamento G probando:</strong> Material estudado: metáfases de linfócitos de sangue periférico. Foram analisadas 20 células. Observa-se cariótipo 46,XX,del(X)(p11.2). Não foram observadas outras alterações cromossômicas numéricas ou estruturais.')">
+        Cariótipo com bandamento G <br>
+        Paciente: II-3 (probando) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExam(this, '<strong>Cariótipo com bandamento G mãe:</strong> Material estudado: metáfases de linfócitos de sangue periférico. Foram analisadas 20 células. Cariótipo 46,XX, sem alterações numéricas ou estruturais identificadas.')">
+        Cariótipo com bandamento G <br>
+        Paciente: I-1 (mãe) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExam(this, '<strong>Resultado cariótipo com bandamento G pai:</strong> Material estudado: metáfases de linfócitos de sangue periférico. Foram analisadas 20 células. Cariótipo 46,XY, sem alterações numéricas ou estruturais identificadas.')">
+        Cariótipo com bandamento G <br>
+        Paciente: I-2 (pai) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExam(this, '<strong>Resultado cariótipo com bandamento G pai:</strong> Material estudado: metáfases de linfócitos de sangue periférico. Foram analisadas 20 células. Cariótipo 46,XY, sem alterações numéricas ou estruturais identificadas.')">
+        Cariótipo com bandamento G <br>
+        Paciente: II-2 (irmão afetado) <br> (Custo: R$600)
+      </button>
+
+
+      <!-- FISH -->
+      <button class="exam-button" data-cost="600"
+        onclick="requestExam(this, '<strong>Resultado FISH probando:</strong> Hibridização in situ fluorescente utilizando-se sondas distribuídas ao longo do cromossomo X evidenciou a presença de apenas um sinal de fluorescência para a região Xp11.2 em cada metáfase analisada, compatível com deleção de uma das cópias de Xp11.2. Sonda de controle em outra região do X mostrou dois sinais, confirmando deleção parcial do X em Xp11.2.')">
+        Fluorescent in situ hybridization (FISH) <br>
+        Paciente: II-3 (probando) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExam(this, '<strong>Resultado FISH mãe:</strong> Hibridização in situ fluorescente utilizando-se sondas distribuídas ao longo do cromossomo X não revelou alterações numéricas, estruturais ou CNVs neste cromossomo')">
+        Fluorescent in situ hybridization (FISH) <br>
+        Paciente: I-1 (mãe) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExam(this, '<strong>Resultado FISH pai:</strong> Hibridização in situ fluorescente utilizando-se sondas distribuídas ao longo do cromossomo X não revelou alterações numéricas, estruturais ou CNVs neste cromossomo')">
+        Fluorescent in situ hybridization (FISH) <br>
+        Paciente: I-2 (pai) <br> (Custo: R$600)
+      </button>
+
+      <button class="exam-button" data-cost="600"
+        onclick="requestExam(this, '<strong>Resultado FISH irmão afetado:</strong> Hibridização in situ fluorescente utilizando-se sondas distribuídas ao longo do cromossomo X não revelou alterações numéricas, estruturais ou CNVs neste cromossomo')">
+        Fluorescent in situ hybridization (FISH) <br>
+        Paciente: II-2 (irmão afetado) <br> (Custo: R$600)
+      </button>
+
+
+
+      <!-- NGS EXOMA -->
+      <button class="exam-button" data-cost="5000"
+        onclick="requestExam(this, '<strong>Resultado NGS exoma probando:</strong> Solicitar planilha de variantes enviando email para karinagriesi@gmail.com <br> Indicar se a solicitação é do painel ou exoma e se é apenas para o probando ou para a família')">
+        NGS exoma probando <br> (Custo: R$5000)
+      </button>
+
+      <button class="exam-button" data-cost="10000"
+        onclick="requestExam(this, '<strong>Resultado NGS exoma trio:</strong> Solicitar planilha de variantes enviando email para karinagriesi@gmail.com <br> Indicar se a solicitação é do painel ou exoma e se é apenas para o probando ou para a família')">
+        NGS exoma família (trio) <br> (Custo: R$10000)
+      </button>
+
+      <!-- PATERNIDADE -->
+      <button class="exam-button" data-cost="400"
+        onclick="requestExam(this, '<strong>Resultado teste de paternidade:</strong> Foram genotipados 16 marcadores STR no material do probando e dos supostos pais biológicos. O teste confirma que o probando é filha biológica dos progenitores testados, com probabilidade de paternidade superior a 99,9%.')">
+        Investigação de paternidade <br>
+        Paciente: II-3 (probando) <br> (Custo: R$400)
+      </button>
+
+      <!-- NGS PAINEL -->
+      <button class="exam-button" data-cost="3000"
+        onclick="requestExam(this, '<strong>Resultado NGS painel probando:</strong> Solicitar planilha de variantes enviando email para karinagriesi@gmail.com <br> Indicar se a solicitação é do painel ou exoma e se é apenas para o probando ou para a família')">
+        NGS painel probando (genes de coagulopatias) <br> (Custo: R$3000)
+      </button>
+
+      <button class="exam-button" data-cost="6000"
+        onclick="requestExam(this, '<strong>Resultado NGS painel trio:</strong> Solicitar planilha de variantes enviando email para karinagriesi@gmail.com <br> Indicar se a solicitação é do painel ou exoma e se é apenas para o probando ou para a família.')">
+        NGS painel família (trio) <br> (Custo: R$6000)
+      </button>
+    </div>
+
+    <h2>Resultados</h2>
+    <div id="results"></div>
+
+    <p id="timestamp"></p>
+    <footer>
+      <p><i>Criado por: Profa. Dra. Karina Griesi e Carolina Souza Sanchez</i></p>
+      <p><i>Versão: 1.1 - Caso Hemofilia</i></p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("password-button").addEventListener("click", function() {
+      var passwordInput = document.getElementById("password-input").value;
+      var correctPassword = "G3nom@mrpb"; // senha de abertura
+
+      if (passwordInput === correctPassword) {
+        document.getElementById("password-container").style.display = "none";
+        document.getElementById("game-container").style.display = "block";
+        showTimestamp();
+      } else {
+        alert("Senha incorreta. Tente novamente.");
+      }
+    });
+
+    function requestExam(button, result) {
+      if (button.classList.contains("disabled")) {
+        return;
+      }
+
+      var cost = parseInt(button.getAttribute("data-cost"));
+      var totalMoneyElement = document.getElementById("total-money");
+      var totalMoney = parseInt(totalMoneyElement.innerText);
+
+      if (totalMoney >= cost) {
+        totalMoney -= cost;
+        totalMoneyElement.innerText = totalMoney;
+
+        var resultsElement = document.getElementById("results");
+        resultsElement.innerHTML += "<p>" + result + "</p>";
+
+        button.classList.add("disabled");
+      }
+    }
+
+    function requestExamWithPassword(button, password, result) {
+      var passwordInput = prompt("Qual é o gene de interesse? (digite tudo em MAIÚSCULO)");
+      if (passwordInput === password) {
+        requestExam(button, result);
+      } else {
+        alert("Foram investigados por sequenciamento Sanger os exons do gene solicitado. Não foram detectadas variantes no gene de interesse clínico para o caso.");
+      }
+    }
+
+    function showTimestamp() {
+      var timestampElement = document.getElementById("timestamp");
+      var now = new Date();
+      var timestamp = "Programa aberto em: " + now.toLocaleString();
+      timestampElement.innerText = timestamp;
+    }
+  </script>
+</body>
+</html>
